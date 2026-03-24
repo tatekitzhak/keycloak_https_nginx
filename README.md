@@ -3,8 +3,23 @@
 #### Tutor
 # https://dorokhovich.com/blog/keycloak-nginx-cluster
 # https://www.youtube.com/watch?v=Kv3hhuyrpXg
+# https://www.keycloak.org/server/reverseproxy
+# https://rogitel.com/keycloak-installing-with-nginx-troubleshooting/s
 ####
 
+# ssl
+```bash
+openssl req -x509 -out app/nginx/certs/localhost.crt -keyout app/nginx/certs/localhost.key \
+  -newkey rsa:2048 -nodes -sha256 -days 365 \
+  -subj "/CN=18.219.43.5" -extensions EXT -config <( \
+   printf "[dn]\nCN=18.219.43.5\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=IP:18.219.43.5\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+```
+
+openssl req -x509 -out localhost.crt -keyout localhost.key \
+  -newkey rsa:2048 -nodes -sha256 -days 365 \
+  -subj "/CN=18.219.43.5" -extensions EXT -config <( \
+   printf "[dn]\nCN=18.219.43.5\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=IP:18.219.43.5\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+   
 
 ```bash
 
@@ -36,3 +51,23 @@
 ## User Federation
 - DataBase User Table
 - NoSQL 
+
+clean docker:
+- sudo docker-compose down
+- sudo docker system prune -f
+
+run docker:
+- sudo docker-compose up -d --remove-orphans
+- sudo docker ps
+- sudo docker exec ee3d31555276 curl -v http://localhost:8080
+
+docker util:
+
+find containrs ID:
+- sudo docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+
+Install vim:
+-  sudo docker exec -u 0 -it f25d80c2dd30 sh -c "apk add vim"
+
+Logs:
+- docker logs -f keycloak
